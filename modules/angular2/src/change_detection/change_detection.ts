@@ -1,11 +1,7 @@
 import {JitProtoChangeDetector} from './jit_proto_change_detector';
 import {PregenProtoChangeDetector} from './pregen_proto_change_detector';
-import {DynamicProtoChangeDetector} from './proto_change_detector';
-import {IterableDiffers, IterableDifferFactory} from './differs/iterable_differs';
 import {DefaultIterableDifferFactory} from './differs/default_iterable_differ';
-import {KeyValueDiffers, KeyValueDifferFactory} from './differs/keyvalue_differs';
 import {DefaultKeyValueDifferFactory} from './differs/default_keyvalue_differ';
-import {ChangeDetection, ProtoChangeDetector, ChangeDetectorDefinition} from './interfaces';
 import {Injector, Inject, Injectable, OpaqueToken, Optional, Binding} from 'angular2/di';
 import {List, StringMap, StringMapWrapper} from 'angular2/src/facade/collection';
 import {CONST, CONST_EXPR, isPresent, BaseException} from 'angular2/src/facade/lang';
@@ -18,34 +14,46 @@ export {
   LiteralArray,
   ImplicitReceiver
 } from './parser/ast';
-
 export {Lexer} from './parser/lexer';
 export {Parser} from './parser/parser';
 export {Locals} from './parser/locals';
-
 export {
   DehydratedException,
   ExpressionChangedAfterItHasBeenCheckedException,
   ChangeDetectionError
 } from './exceptions';
-export {
-  ProtoChangeDetector,
-  ChangeDetector,
-  ChangeDispatcher,
-  ChangeDetection,
-  ChangeDetectorDefinition,
-  DebugContext
-} from './interfaces';
 export {CHECK_ONCE, CHECK_ALWAYS, DETACHED, CHECKED, ON_PUSH, DEFAULT} from './constants';
-export {DynamicProtoChangeDetector} from './proto_change_detector';
+export {DynamicChangeDetector} from './dynamic_change_detector';
 export {BindingRecord} from './binding_record';
 export {DirectiveIndex, DirectiveRecord} from './directive_record';
-export {DynamicChangeDetector} from './dynamic_change_detector';
 export {ChangeDetectorRef} from './change_detector_ref';
-export {IterableDiffers, IterableDiffer, IterableDifferFactory} from './differs/iterable_differs';
-export {KeyValueDiffers, KeyValueDiffer, KeyValueDifferFactory} from './differs/keyvalue_differs';
 export {PipeTransform, PipeOnDestroy} from './pipe_transform';
 export {WrappedValue} from './change_detection_util';
+
+// remove when https://github.com/systemjs/systemjs/issues/712 is closed
+import * as iterableImport from './differs/iterable_differs';
+import * as keyImport from './differs/keyvalue_differs';
+import * as protoImport from './proto_change_detector';
+import * as interfacesImport from './interfaces';
+export var ChangeDetection = interfacesImport.ChangeDetection;
+export var ChangeDetectorDefinition = interfacesImport.ChangeDetectorDefinition;
+export var DebugContext = interfacesImport.DebugContext;
+export var IterableDiffers = iterableImport.IterableDiffers;
+export var KeyValueDiffers = keyImport.KeyValueDiffers;
+export var DynamicProtoChangeDetector = protoImport.DynamicProtoChangeDetector;
+export type ProtoChangeDetector = interfacesImport.ProtoChangeDetector;
+export type ChangeDetector = interfacesImport.ChangeDetector;
+export type ChangeDispatcher = interfacesImport.ChangeDispatcher;
+export type ChangeDetection = interfacesImport.ChangeDetection;
+export type ChangeDetectorDefinition = interfacesImport.ChangeDetectorDefinition;
+export type DebugContext = interfacesImport.DebugContext;
+export type IterableDiffers = iterableImport.IterableDiffers;
+export type IterableDiffer = iterableImport.IterableDiffer;
+export type IterableDifferFactory = iterableImport.IterableDifferFactory;
+export type KeyValueDiffers = keyImport.KeyValueDiffers;
+export type KeyValueDiffer = keyImport.KeyValueDiffer;
+export type KeyValueDifferFactory = keyImport.KeyValueDifferFactory;
+export type DynamicProtoChangeDetector = protoImport.DynamicProtoChangeDetector;
 
 /**
  * Structural diffing for `Object`s and `Map`s.
@@ -78,7 +86,7 @@ export const PROTO_CHANGE_DETECTOR = CONST_EXPR(new OpaqueToken('ProtoChangeDete
  * Implements change detection using a map of pregenerated proto detectors.
  */
 @Injectable()
-export class PreGeneratedChangeDetection extends ChangeDetection {
+export class PreGeneratedChangeDetection extends interfacesImport.ChangeDetection {
   _dynamicChangeDetection: ChangeDetection;
   _protoChangeDetectorFactories: StringMap<string, Function>;
 
@@ -109,7 +117,7 @@ export class PreGeneratedChangeDetection extends ChangeDetection {
  * This is slower than {@link JitChangeDetection}.
  */
 @Injectable()
-export class DynamicChangeDetection extends ChangeDetection {
+export class DynamicChangeDetection extends interfacesImport.ChangeDetection {
   createProtoChangeDetector(definition: ChangeDetectorDefinition): ProtoChangeDetector {
     return new DynamicProtoChangeDetector(definition);
   }
@@ -123,7 +131,7 @@ export class DynamicChangeDetection extends ChangeDetection {
  */
 @Injectable()
 @CONST()
-export class JitChangeDetection extends ChangeDetection {
+export class JitChangeDetection extends interfacesImport.ChangeDetection {
   static isSupported(): boolean { return JitProtoChangeDetector.isSupported(); }
 
   createProtoChangeDetector(definition: ChangeDetectorDefinition): ProtoChangeDetector {
