@@ -63,8 +63,8 @@ export function main() {
     function wrapView(view: AppView): ViewRef { return new ViewRef(view); }
 
     function resetSpies() {
-      viewListener.spy('viewCreated').reset();
-      viewListener.spy('viewDestroyed').reset();
+      viewListener.spy('onViewCreated').reset();
+      viewListener.spy('onViewDestroyed').reset();
       renderer.spy('createView').reset();
       renderer.spy('destroyView').reset();
       renderer.spy('createRootHostView').reset();
@@ -115,7 +115,7 @@ export function main() {
         var rootView =
             internalView(<ViewRef>manager.createRootHostView(wrapPv(hostProtoView), null, null));
         expect(rootView.proto).toBe(hostProtoView);
-        expect(viewListener.spy('viewCreated')).toHaveBeenCalledWith(rootView);
+        expect(viewListener.spy('onViewCreated')).toHaveBeenCalledWith(rootView);
       });
 
       it('should hydrate the view', () => {
@@ -173,7 +173,7 @@ export function main() {
       it('should destroy the render view', () => {
         manager.destroyRootHostView(wrapView(hostView));
         expect(renderer.spy('destroyView')).toHaveBeenCalledWith(hostRenderViewRef);
-        expect(viewListener.spy('viewDestroyed')).toHaveBeenCalledWith(hostView);
+        expect(viewListener.spy('onViewDestroyed')).toHaveBeenCalledWith(hostView);
       });
 
       it('should not return the view to the pool', () => {
@@ -213,7 +213,7 @@ export function main() {
                 internalView(manager.createEmbeddedViewInContainer(vcRef, 0, templateRef));
             expect(childView.proto).toBe(childProtoView);
             expect(childView).toBe(hostView.views[2]);
-            expect(viewListener.spy('viewCreated')).not.toHaveBeenCalled();
+            expect(viewListener.spy('onViewCreated')).not.toHaveBeenCalled();
             expect(renderer.spy('createView')).not.toHaveBeenCalled();
           });
 
@@ -254,7 +254,7 @@ export function main() {
                 internalView(manager.createEmbeddedViewInContainer(vcRef, 1, templateRef));
             expect(childView.proto).toBe(childProtoView);
             expect(childView).not.toBe(firstChildView);
-            expect(viewListener.spy('viewCreated')).toHaveBeenCalledWith(childView);
+            expect(viewListener.spy('onViewCreated')).toHaveBeenCalledWith(childView);
             expect(renderer.spy('createView'))
                 .toHaveBeenCalledWith(childProtoView.mergeMapping.renderProtoViewRef,
                                       childProtoView.mergeMapping.renderFragmentCount);
@@ -299,7 +299,7 @@ export function main() {
                 internalView(manager.createEmbeddedViewInContainer(vcRef, 0, templateRef));
             expect(childView.proto).toBe(childProtoView);
             expect(childView).toBe(hostView.views[2]);
-            expect(viewListener.spy('viewCreated')).not.toHaveBeenCalled();
+            expect(viewListener.spy('onViewCreated')).not.toHaveBeenCalled();
             expect(renderer.spy('createView')).not.toHaveBeenCalled();
           });
 
@@ -313,7 +313,7 @@ export function main() {
                 <ViewRef>manager.createHostViewInContainer(vcRef, 0, wrapPv(newHostPv), null));
             expect(newHostView.proto).toBe(newHostPv);
             expect(newHostView).not.toBe(hostView.views[2]);
-            expect(viewListener.spy('viewCreated')).toHaveBeenCalledWith(newHostView);
+            expect(viewListener.spy('onViewCreated')).toHaveBeenCalledWith(newHostView);
             expect(renderer.spy('createView'))
                 .toHaveBeenCalledWith(newHostPv.mergeMapping.renderProtoViewRef,
                                       newHostPv.mergeMapping.renderFragmentCount);
