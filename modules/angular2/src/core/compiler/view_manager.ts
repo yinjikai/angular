@@ -168,7 +168,7 @@ export class AppViewManager {
     this._renderer.detachFragment(hostView.renderFragment);
     this._renderer.dehydrateView(hostView.render);
     this._viewDehydrateRecurse(hostView);
-    this._viewListener.viewDestroyed(hostView);
+    this._viewListener.onViewDestroyed(hostView);
     this._renderer.destroyView(hostView.render);
     wtfLeave(s);
   }
@@ -337,7 +337,7 @@ export class AppViewManager {
     var mergedParentView =
         this._utils.createView(protoView, renderViewWithFragments, this, this._renderer);
     this._renderer.setEventDispatcher(mergedParentView.render, mergedParentView);
-    this._viewListener.viewCreated(mergedParentView);
+    this._viewListener.onViewCreated(mergedParentView);
     return mergedParentView;
   }
 
@@ -354,7 +354,7 @@ export class AppViewManager {
   _destroyPooledView(view: viewModule.AppView) {
     var wasReturned = this._viewPool.returnView(view);
     if (!wasReturned) {
-      this._viewListener.viewDestroyed(view);
+      this._viewListener.onViewDestroyed(view);
       this._renderer.destroyView(view.render);
     }
   }
