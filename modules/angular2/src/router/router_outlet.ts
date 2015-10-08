@@ -27,13 +27,9 @@ let _resolveToTrue = PromiseWrapper.resolve(true);
 @Directive({selector: 'router-outlet'})
 export class RouterOutlet {
   name: string = null;
-
   private _componentRef: ComponentRef = null;
   private _currentInstruction: ComponentInstruction = null;
 
-  /**
-   * @internal
-   */
   constructor(private _elementRef: ElementRef, private _loader: DynamicComponentLoader,
               private _parentRouter: routerMod.Router, @Attribute('name') nameAttr: string) {
     if (isPresent(nameAttr)) {

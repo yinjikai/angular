@@ -111,7 +111,6 @@ export class NgZone {
   _pendingTimeouts: number[] = [];
 
   /**
-   * @internal
    * @param {bool} enableLongStackTrace whether to enable long stack trace. They should only be
    *               enabled in development mode as they significantly impact perf.
    */
@@ -136,8 +135,6 @@ export class NgZone {
   }
 
   /**
-   * @internal <!-- TODO: refactor to make TS private -->
-   *
    * Sets the zone hook that is called just before a browser task that is handled by Angular
    * executes.
    *
@@ -150,8 +147,6 @@ export class NgZone {
   }
 
   /**
-   * @internal <!-- TODO: refactor to make TS private -->
-   *
    * Sets the zone hook that is called immediately after Angular zone is done processing the current
    * task and any microtasks scheduled from that task.
    *
@@ -166,8 +161,6 @@ export class NgZone {
   }
 
   /**
-   * @internal <!-- TODO: refactor to make TS private -->
-   *
    * Sets the zone hook that is called immediately after the `onTurnDone` callback is called and any
    * microstasks scheduled from within that callback are drained.
    *
@@ -192,8 +185,6 @@ export class NgZone {
   }
 
   /**
-   * @internal <!-- TODO: refactor to make TS private -->
-   *
    * Sets the zone hook that is called when an error is thrown in the Angular zone.
    *
    * Setting the hook overrides any previously set hook.
