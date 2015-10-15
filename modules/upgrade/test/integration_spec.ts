@@ -219,6 +219,49 @@ export function main() {
                });
 
          }));
+
+      it('should support view reuse', inject([AsyncTestCompleter], (async) => {
+           var ng1Module = angular.module('ng1', []);
+           ng1Module.directive('pane', function() {
+             return {scope: {title: '@'}, template: '{{title}}(<span ng-transclude></span>)'};
+           });
+           var adapter: UpgradeAdapter = new UpgradeAdapter();
+           var bar = Component({selector: 'bar', template: '{<ng-content></ng-content>}'})
+                         .Class({
+                           constructor: function() {
+
+                           }
+                         });
+           var li =
+               Component({
+                 selector: 'li',
+                 inputs: ['title'],
+                 template:
+                     '<pane [title]="title"><bar>{{title}}</bar></pane>[<ng-content></ng-content>]',
+                 directives: [adapter.upgradeNg1Component('pane'), bar]
+               }).Class({constructor: function() {}});
+
+           ng1Module.directive('li', adapter.downgradeNg2Component(li));
+           var element =
+               html('<ul><li ng-repeat="item in items" [title]="item">{{item}}</li></ul>');
+           adapter.bootstrap(element, ['ng1'])
+               .ready((ref) => {
+                 var items = (<any>ref.ng1RootScope).items = ['A'];
+                 ref.ng1RootScope.$apply();
+                 expect(multiTrim(document.body.textContent)).toEqual("A({A})[A]");
+
+                 items.length = 0;
+                 ref.ng1RootScope.$apply();
+                 expect(multiTrim(document.body.textContent)).toEqual("");
+
+                 items.push('B');
+                 ref.ng1RootScope.$apply();
+                 expect(multiTrim(document.body.textContent)).toEqual("B({B})[B]");
+
+                 ref.dispose();
+                 async.done();
+               });
+         }));
     });
 
     describe('upgrade ng1 component', () => {
@@ -527,7 +570,7 @@ export function main() {
 
            document.body.innerHTML = '<ng2 name="World">project</ng2>';
 
-           adapter.bootstrap(document.body, ['myExample'])
+           adapter.bootstrap((<any>document.body).firstChild, ['myExample'])
                .ready((ref) => {
                  expect(multiTrim(document.body.textContent))
                      .toEqual("ng2[ng1[Hello World!](transclude)](project)");

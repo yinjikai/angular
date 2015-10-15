@@ -26,7 +26,7 @@ export class DowngradeNg2ComponentAdapter {
   changeDetector: ChangeDetectorRef = null;
   componentScope: angular.IScope;
   childNodes: Node[];
-  contentInserctionPoint: Node = null;
+  contentInsertionPoint: Node = null;
 
   constructor(private id: string, private info: ComponentInfo,
               private element: angular.IAugmentedJQuery, private attrs: angular.IAttributes,
@@ -47,7 +47,7 @@ export class DowngradeNg2ComponentAdapter {
     var hostElement = this.viewManager.getHostElement(this.hostViewRef);
     this.changeDetector = this.hostViewRef.changeDetectorRef;
     this.component = this.viewManager.getComponent(hostElement);
-    this.contentInserctionPoint = renderer.rootContentInsertionPoints[0];
+    this.contentInsertionPoint = renderer.rootContentInsertionPoints[0];
   }
 
   setupInputs() {
@@ -106,10 +106,10 @@ export class DowngradeNg2ComponentAdapter {
 
   projectContent() {
     var childNodes = this.childNodes;
-    if (this.contentInserctionPoint) {
-      var parent = this.contentInserctionPoint.parentNode;
+    if (this.contentInsertionPoint) {
+      var parent = this.contentInsertionPoint.parentNode;
       for (var i = 0, ii = childNodes.length; i < ii; i++) {
-        parent.insertBefore(childNodes[i], this.contentInserctionPoint);
+        parent.insertBefore(childNodes[i], this.contentInsertionPoint);
       }
     }
   }
