@@ -192,7 +192,7 @@ export function main() {
 
           expect(g.valid).toEqual(false);
 
-          expect(g.errors).toEqual({"required": [one]});
+          expect(g.errors).toEqual({"controls": {"one": {"required": true}}});
         });
 
         it("should run the validator with the value changes", () => {
@@ -445,7 +445,7 @@ export function main() {
           ]);
 
           expect(a.valid).toBe(false);
-          expect(a.errors).toEqual({"required": [a.controls[1]]});
+          expect(a.errors).toEqual({"controls": [null, {"required": true}, null]});
         });
 
         it("should run the validator when the value changes", () => {
@@ -476,6 +476,35 @@ export function main() {
           c.markAsDirty();
 
           expect(a.dirty).toEqual(true);
+        });
+      });
+
+      describe("pending", () => {
+        var c: Control;
+        var a: ControlArray;
+
+        beforeEach(() => {
+          c = new Control('value');
+          a = new ControlArray([c]);
+        });
+
+        it("should be false after creating a control", () => {
+          expect(c.pending).toEqual(false);
+          expect(a.pending).toEqual(false);
+        });
+
+        it("should be true after changing the value of the control", () => {
+          c.markAsPending();
+
+          expect(c.pending).toEqual(true);
+          expect(a.pending).toEqual(true);
+        });
+
+        it("should not update the parent when onlySelf = true", () => {
+          c.markAsPending({onlySelf: true});
+
+          expect(c.pending).toEqual(true);
+          expect(a.pending).toEqual(false);
         });
       });
 
